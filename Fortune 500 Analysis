@@ -1,0 +1,25 @@
+--Read Data--
+SELECT * FROM fortune_companies;
+--Returns the average # of paid time off days for employees for each industry--
+SELECT industry, ROUND(AVG(paid_time_off_days)) as avg_pto
+FROM fortune_companies
+GROUP BY industry;
+--Returns the total revenue of each industry--
+SELECT industry, ROUND(SUM(revenue))  as total_revenue
+FROM fortune_companies
+GROUP BY industry;
+--Returns total # of employees in each industry--
+SELECT industry, SUM(employees) as total_employees
+FROM fortune_companies
+GROUP BY industry;
+--Returns all industries with a total revenue of at least 1500 and less than 200000 total employees--
+SELECT industry, ROUND(SUM(revenue)) as total_revenue, SUM(employees) as total_employees
+FROM fortune_companies
+GROUP BY industry
+HAVING total_revenue>=1500 AND total_employees<200000;
+--Returns all companies not in the finance or healthcare industry that have fewer employee benefits compared to other companies--
+SELECT company_name, healthcare_benefits, maternity_leave_weeks, paid_time_off_days, CASE WHEN healthcare_benefits=0 
+THEN "low_benefits" WHEN maternity_leave_weeks<=10 THEN "low_benefits" WHEN paid_time_off_days<20 THEN "low_benefits" ELSE "beneficial" END AS benefits
+FROM fortune_companies
+WHERE industry NOT IN("finance", "healthcare")
+ORDER BY healthcare_benefits asc, maternity_leave_weeks asc, paid_time_off_days asc;
